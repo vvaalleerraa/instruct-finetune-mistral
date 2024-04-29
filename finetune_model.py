@@ -84,26 +84,27 @@ def finetune_model(args):
     model_args = TrainingArguments(
         output_dir="mistral-7-style",
         num_train_epochs=3,
-        per_device_train_batch_size=4,
-        gradient_accumulation_steps=2,
-        gradient_checkpointing=True,
+        per_device_train_batch_size=1,
+        gradient_accumulation_steps=1,
+#        gradient_checkpointing=True,
         optim="paged_adamw_32bit",
         logging_steps=10,
         save_strategy="epoch",
         learning_rate=2e-4,
-        bf16=True,
-        tf32=True,
+        bf16=False, #True,
+        fp16=True, #
+        tf32=False, #True,
         max_grad_norm=0.3,
         warmup_ratio=0.03,
         lr_scheduler_type="constant",
         disable_tqdm=False
     )
 
-    max_seq_length = 2048
+    max_seq_length = 1024# 2048
 
     trainer = SFTTrainer(
         model=model,
-        train_dataset=dataset,
+        train_dataset=dataset["train"],
         peft_config=peft_config,
         max_seq_length=max_seq_length,
         tokenizer=tokenizer,
